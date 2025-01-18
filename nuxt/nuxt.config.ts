@@ -4,6 +4,10 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
 
+  app: {
+    head: {},
+  },
+
   nitro: {
     output: {
       publicDir: process.env.IS_DOCKER
@@ -13,6 +17,8 @@ export default defineNuxtConfig({
   },
 
   modules: ["@nuxtjs/tailwindcss", "@nuxtjs/google-fonts"],
+
+  css: ["@/assets/base.css"],
 
   tailwindcss: {
     exposeConfig: true,
