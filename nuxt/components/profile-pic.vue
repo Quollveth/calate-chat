@@ -1,21 +1,31 @@
 <script setup lang="ts">
+const emit = defineEmits(["pictureClicked"]);
+const clickPic = () => {
+  emit("pictureClicked");
+};
+
 interface Props {
   rounded?: boolean;
-  text?: string;
+  clickable?: boolean;
   image: string;
 }
 const props = defineProps<Props>();
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative group overflow-hidden">
     <img
-      :src="image ? image : 'https://placehold.co/150'"
+      :src="image"
       :class="rounded ? 'rounded-full' : ''"
-      class="absolute top-0 left-0"
+      class="w-full h-auto"
     />
-    <!-- TODO: position text above the image -->
-    <!-- TODO: darken on hover -->
-    <div>{{ text }}</div>
+    <div
+      v-if="clickable"
+      class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[#00000025] cursor-pointer"
+      :class="rounded ? 'rounded-full' : ''"
+      @click="clickPic"
+    >
+      <slot></slot>
+    </div>
   </div>
 </template>
