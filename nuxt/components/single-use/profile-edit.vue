@@ -41,8 +41,15 @@ const validatePassword = (value: string): boolean => {
   currentPassword.value = value;
   return Object.values(passwordState.value).every(Boolean);
 };
-</script>
 
+/* TODO: Form submission
+ * ignore password verify field
+ * ensure profile picture isn't too big
+ * differentiate creating and updating account
+ * all fields are optional when updating, only picture is optional when creating
+ */
+</script>
+<!-- TODO: Reuse this component for account creation -->
 <template>
   <Modal showCloseButton @close="emit('close')">
     <input type="file" accept="image/*" class="hidden" @change="uploadHandler" ref="pictureInput" />
@@ -54,6 +61,8 @@ const validatePassword = (value: string): boolean => {
             <path d="M1 1V15H15V9H13V13H3V3H7V1H1Z" fill="#1e1e1e" />
           </svg>
         </ProfilePic>
+
+        <!-- TODO: check username availability button -->
         <ValidatedInput
           name="username"
           title="Username"
@@ -64,6 +73,7 @@ const validatePassword = (value: string): boolean => {
             }
           "
         />
+        <!-- TODO: validate email button -->
         <ValidatedInput
           name="email"
           type="email"
@@ -74,6 +84,7 @@ const validatePassword = (value: string): boolean => {
             }
           "
         />
+        <!-- TODO: show password button -->
         <ValidatedInput
           name="password"
           type="password"
