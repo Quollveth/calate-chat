@@ -9,7 +9,7 @@ interface Props {
   clickable?: boolean;
   image: string;
 }
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

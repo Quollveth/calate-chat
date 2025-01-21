@@ -1,9 +1,5 @@
 <script setup lang="ts">
 const emit = defineEmits(["close"]);
-const closeModal = () => {
-  emit("close");
-};
-
 interface Props {
   showCloseButton?: boolean;
   closeOnDefocus?: boolean;
@@ -12,7 +8,7 @@ const props = defineProps<Props>();
 
 const outClickHandler = () => {
   if (props.closeOnDefocus) {
-    closeModal();
+    emit("close");
   }
 };
 </script>
@@ -20,7 +16,7 @@ const outClickHandler = () => {
 <template>
   <div class="fixed z-50 inset-0 overflow-y-auto">
     <div
-      class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
     >
       <div class="fixed inset-0 transition-opacity" aria-hidden="true">
         <div
@@ -49,7 +45,7 @@ const outClickHandler = () => {
             type="button"
             data-behavior="cancel"
             class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            @click="closeModal"
+            @click="emit('close')"
           >
             <span class="sr-only">Close</span>
             <svg
