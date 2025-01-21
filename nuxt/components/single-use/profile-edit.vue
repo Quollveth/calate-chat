@@ -12,43 +12,25 @@ const updatePicture = () => {
 const currentPassword = ref("");
 const showPassReqs = ref(false);
 
-interface passwordState {
-  minLength: boolean;
-  hasNumbers: boolean;
-  hasSpecial: boolean;
-  hasUpper: boolean;
-  hasLower: boolean;
-}
-// I now get why go has zero values
-const passwordState = ref<passwordState>({
-  minLength: false,
-  hasNumbers: false,
-  hasSpecial: false,
-  hasUpper: false,
-  hasLower: false,
+const passwordState = computed(() => {
+  return {
+    minLength: 12 <= currentPassword.value.length,
+    hasNumbers: /[0-9]/.test(currentPassword.value),
+    hasSpecial: /[!@#$%^&*(),.?":{}|<>]/.test(currentPassword.value),
+    hasUpper: /[A-Z]/.test(currentPassword.value),
+    hasLower: /[a-z]/.test(currentPassword.value),
+  };
 });
 
 const validatePassword = (value: string): boolean => {
   currentPassword.value = value;
-
-  passwordState.value.minLength = value.length >= 12;
-  passwordState.value.hasNumbers = /[0-9]/.test(value);
-  passwordState.value.hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(value);
-  passwordState.value.hasUpper = /[A-Z]/.test(value);
-  passwordState.value.hasLower = /[a-z]/.test(value);
-
-  return (
-    passwordState.value.minLength &&
-    passwordState.value.hasNumbers &&
-    passwordState.value.hasSpecial &&
-    passwordState.value.hasUpper &&
-    passwordState.value.hasLower
-  );
+  return Object.values(passwordState.value).every(Boolean);
 };
 </script>
 
 <template>
   <Modal showCloseButton @close="emit('close')">
+    <input type="file" accept="image/*" class="hidden" />
     <div class="flex justify-center relative">
       <div class="w-60 flex flex-col gap-5 items-center justify-around">
         <ProfilePic
@@ -58,13 +40,7 @@ const validatePassword = (value: string): boolean => {
           clickable
           @pictureClicked="updatePicture"
         >
-          <svg
-            width="30px"
-            height="30px"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg width="30px" height="30px" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M13 0L16 3L9 10H6V7L13 0Z" fill="#1e1e1e" />
             <path d="M1 1V15H15V9H13V13H3V3H7V1H1Z" fill="#1e1e1e" />
           </svg>
@@ -116,24 +92,10 @@ const validatePassword = (value: string): boolean => {
       >
         <p class="font-semibold text-gray-700 mb-2">Password must contain:</p>
         <ul class="list-disc list-inside text-start text-gray-600 space-y-1">
-          <li :class="!passwordState.minLength ? 'text-red-500' : ''">
-            At least 12 Characters
-          </li>
-          <li :class="!passwordState.hasNumbers ? 'text-red-500' : ''">
-            At least one number
-          </li>
-          <li :class="!passwordState.hasSpecial ? 'text-red-500' : ''">
-            A special character
-          </li>
-          <li
-            :class="
-              !(passwordState.hasUpper && passwordState.hasLower)
-                ? 'text-red-500'
-                : ''
-            "
-          >
-            Mixed case letters
-          </li>
+          <li :class="!passwordState.minLength ? 'text-red-500' : ''">At least 12 Characters</li>
+          <li :class="!passwordState.hasNumbers ? 'text-red-500' : ''">At least one number</li>
+          <li :class="!passwordState.hasSpecial ? 'text-red-500' : ''">A special character</li>
+          <li :class="!(passwordState.hasUpper && passwordState.hasLower) ? 'text-red-500' : ''">Mixed case letters</li>
         </ul>
       </div>
     </div>
