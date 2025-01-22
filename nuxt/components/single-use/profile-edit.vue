@@ -47,6 +47,16 @@ const validateUsername = (value: string): boolean => {
   currentUsername.value = value;
   return value.length >= 5 && value.length <= 20;
 };
+const usernameTaken: Ref<boolean | undefined> = ref(undefined);
+usernameTaken.value = undefined;
+const verifyUsername = () => {
+  //TODO: check username existence on server
+  usernameTaken.value = true;
+
+  window.setTimeout(() => {
+    usernameTaken.value = undefined;
+  }, 2000);
+};
 
 const currentEmail = ref("");
 const validateEmail = (value: string): boolean => {
@@ -54,10 +64,19 @@ const validateEmail = (value: string): boolean => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); // pattern: *@*.*
 };
 
-const token = ref("");
+const emailToken = ref("");
 const saveEmailToken = (value: string): boolean => {
-  token.value = value;
+  emailToken.value = value;
   return true;
+};
+
+const disableTokenButton = ref(false);
+const sendEmail = () => {
+  //TODO: send email token on the server
+  disableTokenButton.value = true;
+  window.setTimeout(() => {
+    disableTokenButton.value = false;
+  }, 10000);
 };
 
 /* TODO: Form submission
@@ -73,7 +92,7 @@ const saveEmailToken = (value: string): boolean => {
     <input type="file" accept="image/*" class="hidden" @change="uploadHandler" ref="pictureInput" />
     <div class="flex flex-col justify-center relative gap-5">
       <!-- profile pic -->
-      <div class="flex gap-5 items-start">
+      <div class="flex gap-5">
         <ProfilePic
           class="w-32 h-32"
           :image="currentPicture"
@@ -94,21 +113,51 @@ const saveEmailToken = (value: string): boolean => {
         </ProfilePic>
       </div>
       <!-- username -->
-      <div class="flex gap-5 items-start">
+      <div class="flex gap-5">
         <ValidatedInput
           name="username"
           title="Username"
           tooltipText="Between 5 and 20 characters"
           :validator="validateUsername"
         />
+
+        <button
+          :disabled="usernameTaken !== undefined"
+          @click="verifyUsername"
+          class="px-6 py-3 w-28 text-white rounded-lg shadow-md active:shadow-lg focus:ring-4 focus:ring-blue-300 transition-all duration-500 ease-in-out"
+          :class="
+            usernameTaken === undefined
+              ? 'bg-blue-600 hover:bg-blue-700'
+              : usernameTaken
+                ? 'bg-red-600'
+                : 'bg-green-600'
+          "
+        >
+          {{ usernameTaken === undefined ? "Check" : usernameTaken ? "Taken" : "Available" }}
+        </button>
       </div>
       <!-- email -->
-      <div class="flex gap-5 items-start">
+      <div class="flex gap-5 relative">
         <ValidatedInput name="email" type="email" title="Email" :validator="validateEmail" />
-        <ValidatedInput name="emailToken" title="Email Token" :validator="saveEmailToken" />
+        <div class="flex-1">
+          <ValidatedInput
+            class="w-2/3"
+            name="emailToken"
+            title="Email Token"
+            :validator="saveEmailToken"
+          />
+        </div>
+        <button
+          :disabled="disableTokenButton"
+          class="absolute right-0 top-1 w-14 px-1 py-3 text-white rounded-lg shadow-md active:shadow-lg focus:ring-4 focus:ring-blue-300 transition-all"
+          :class="disableTokenButton ? 'bg-gray-600' : 'bg-blue-600 hover:bg-blue-700'"
+          @click="sendEmail"
+        >
+          Send
+        </button>
       </div>
       <!-- password -->
-      <div class="flex gap-5 items-start">
+      <div class="flex gap-5">
         <ValidatedInput
           name="password"
           :type="showPassword ? 'text' : 'password'"
