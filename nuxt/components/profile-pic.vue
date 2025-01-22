@@ -17,7 +17,7 @@ defineProps<Props>();
     <img
       :src="image"
       :class="rounded ? 'rounded-full' : ''"
-      class="w-full h-auto"
+      class="w-full h-auto border border-gray-300"
     />
     <div
       v-if="clickable"

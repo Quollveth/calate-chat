@@ -35,7 +35,10 @@ const emit = defineEmits(["focus", "blur"]);
   <div class="relative">
     <input
       :type="type ?? 'text'"
-      :class="[title ? 'pt-6 pb-1' : 'py-2', valid ? 'focus:border-blue-500' : 'border-red-300 focus:border-red-500']"
+      :class="[
+        title ? 'pt-6 pb-1' : 'py-2',
+        valid ? 'focus:border-blue-500' : 'border-red-300 focus:border-red-500',
+      ]"
       :name="name"
       :required="required ?? undefined"
       @input="handleInput"
@@ -48,6 +51,7 @@ const emit = defineEmits(["focus", "blur"]);
         showTooltip = false;
       "
       id="input"
+      placeholder=""
       class="peer w-full border border-gray-300 bg-transparent px-3 text-gray-900 invalid:border-red-500 focus:ring-blue-500 rounded-md outline-none"
     />
     <!-- TODO: find a better way to postition this tooltip, ideally it grows upwards only -->
@@ -55,7 +59,8 @@ const emit = defineEmits(["focus", "blur"]);
     <label
       for="input"
       v-if="title"
-      class="absolute left-3 top-1 text-gray-400 text-sm transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:text-blue-500"
+      inert
+      class="absolute left-3 top-1 text-gray-400 text-sm transition-all peer-focus:top-1 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:text-blue-500"
     >
       {{ title }}
     </label>
