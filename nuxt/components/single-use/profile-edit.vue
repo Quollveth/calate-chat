@@ -3,10 +3,16 @@ import Modal from "@/components/modal.vue";
 import ProfilePic from "@/components/profile-pic.vue";
 import ValidatedInput from "../validatedInput.vue";
 
+import swal from "sweetalert2";
+
 const emit = defineEmits(["close"]);
 
+//    ___ ___ ___ _____ _   _ ___ ___
+//   | _ \_ _/ __|_   _| | | | _ \ __|
+//   |  _/| | (__  | | | |_| |   / _|
+//   |_| |___\___| |_|  \___/|_|_\___|
 const currentPicture = ref("https://placehold.co/200");
-
+const pictureInput = ref<HTMLInputElement>();
 const uploadHandler = (event: Event) => {
   const file = (event.target as HTMLInputElement).files![0];
   if (!file) {
@@ -18,15 +24,18 @@ const uploadHandler = (event: Event) => {
   };
   reader.readAsDataURL(file);
 };
-
-const pictureInput = ref<HTMLInputElement>();
 const updatePicture = () => {
   pictureInput.value!.click();
 };
 
+//    ___  _   ___ _____      _____  ___ ___
+//   | _ \/_\ / __/ __\ \    / / _ \| _ \   \
+//   |  _/ _ \\__ \__ \\ \/\/ / (_) |   / |) |
+//   |_|/_/ \_\___/___/ \_/\_/ \___/|_|_\___/
 const currentPassword = ref("");
 const showPassReqs = ref(false);
 const showPassword = ref(false);
+const passwordsMatch = ref(false);
 const passwordState = computed(() => {
   return {
     minLength: 12 <= currentPassword.value.length,
@@ -36,21 +45,24 @@ const passwordState = computed(() => {
     hasLower: /[a-z]/.test(currentPassword.value),
   };
 });
-
 const validatePassword = (value: string): boolean => {
   currentPassword.value = value;
-  return Object.values(passwordState.value).every(Boolean);
+  return value == "" || Object.values(passwordState.value).every(Boolean);
 };
 
+//    _   _ ___ ___ ___ _  _   _   __  __ ___
+//   | | | / __| __| _ \ \| | /_\ |  \/  | __|
+//   | |_| \__ \ _||   / .` |/ _ \| |\/| | _|
+//    \___/|___/___|_|_\_|\_/_/ \_\_|  |_|___|
 const currentUsername = ref("");
 const validateUsername = (value: string): boolean => {
   currentUsername.value = value;
-  return value.length >= 5 && value.length <= 20;
+  return value == "" || (value.length >= 5 && value.length <= 20);
 };
 const usernameTaken: Ref<boolean | undefined> = ref(undefined);
 usernameTaken.value = undefined;
 const verifyUsername = () => {
-  //TODO: check username existence on server
+  //TODO: SERVER: check username existence on server
   usernameTaken.value = true;
 
   window.setTimeout(() => {
@@ -58,10 +70,14 @@ const verifyUsername = () => {
   }, 2000);
 };
 
+//    ___ __  __   _   ___ _
+//   | __|  \/  | /_\ |_ _| |
+//   | _|| |\/| |/ _ \ | || |__
+//   |___|_|  |_/_/ \_\___|____|
 const currentEmail = ref("");
 const validateEmail = (value: string): boolean => {
   currentEmail.value = value;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); // pattern: *@*.*
+  return value == "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); // pattern: *@*.*
 };
 
 const emailToken = ref("");
@@ -72,19 +88,112 @@ const saveEmailToken = (value: string): boolean => {
 
 const disableTokenButton = ref(false);
 const sendEmail = () => {
-  //TODO: send email token on the server
+  //TODO: SERVER: send email token on the server
   disableTokenButton.value = true;
   window.setTimeout(() => {
     disableTokenButton.value = false;
   }, 10000);
 };
 
-/* TODO: Form submission
- * ignore password verify field
- * ensure profile picture isn't too big
- * differentiate creating and updating account
- * all fields are optional when updating, only picture is optional when creating
- */
+//    ___   ___   _____
+//   / __| /_\ \ / / __|
+//   \__ \/ _ \ V /| _|
+//   |___/_/ \_\_/ |___|
+const badToast = (text: string) => {
+  swal
+    .mixin({
+      title: text,
+      animation: true,
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+      icon: "error",
+    })
+    .fire();
+};
+
+const disableSaveButton = ref(false);
+const enableSaveBtn = () => {
+  setTimeout(() => {
+    disableSaveButton.value = false;
+  }, 5000);
+};
+const saveChanges = () => {
+  disableSaveButton.value = true;
+
+  const name = currentUsername.value;
+  const email = currentEmail.value;
+  const password = currentPassword.value;
+  const token = emailToken.value;
+  const pictureFile = pictureInput.value?.files?.[0];
+
+  if (!name && !email && !password && !pictureFile) {
+    // All fields empty
+    emit("close");
+    return;
+  }
+
+  if (!validateEmail(email)) {
+    badToast("Must enter a valid email address");
+    enableSaveBtn();
+    return;
+  }
+  if (!validateUsername(name)) {
+    badToast("Must enter a valid username");
+    enableSaveBtn();
+    return;
+  }
+  if (!validatePassword(password)) {
+    badToast("Password must meet all criteria");
+    showPassReqs.value = true;
+    setTimeout(() => {
+      showPassReqs.value = false;
+    }, 1000);
+    enableSaveBtn();
+    return;
+  }
+
+  if (password && !passwordsMatch.value) {
+    badToast("Password confirmation does not match");
+    enableSaveBtn();
+    return;
+  }
+
+  if (email && !token) {
+    badToast("Must include email token");
+    enableSaveBtn();
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("email", email);
+  formData.append("password", password);
+  formData.append("token", token);
+
+  if (pictureFile) {
+    formData.append("picture", pictureFile);
+  }
+
+  updateProfileServer(formData);
+};
+
+const updateProfileServer = (profileData: FormData) => {
+  //TODO: SERVER: Save changes on server
+  swal
+    .mixin({
+      toast: true,
+      title: "Changes Saved",
+      animation: true,
+      position: "top-right",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      icon: "success",
+    })
+    .fire();
+  emit("close");
+};
 </script>
 <!-- TODO: Reuse this component for account creation -->
 <template>
@@ -172,7 +281,8 @@ const sendEmail = () => {
           title="Confirm Password"
           :validator="
             (value: string) => {
-              return value === currentPassword;
+              passwordsMatch = value === currentPassword;
+              return passwordsMatch;
             }
           "
         />
@@ -219,6 +329,17 @@ const sendEmail = () => {
             />
           </svg>
         </butoon>
+      </div>
+      <!-- save button -->
+      <div class="flex justify-center">
+        <button
+          :disabled="disableSaveButton"
+          :class="disableSaveButton ? 'bg-gray-600' : 'bg-blue-600 hover:bg-blue-700'"
+          class="w-1/2 px-1 py-3 text-white rounded-lg shadow-md active:shadow-lg focus:ring-4 focus:ring-blue-300 transition-all"
+          @click="saveChanges"
+        >
+          Save Changes
+        </button>
       </div>
     </div>
     <!-- password requirements, absolute positioned -->
