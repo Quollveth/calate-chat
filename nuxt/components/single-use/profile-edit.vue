@@ -2,6 +2,7 @@
 import Modal from "@/components/modal.vue";
 import ProfilePic from "@/components/profile-pic.vue";
 import ValidatedInput from "../validatedInput.vue";
+import StyledButton from "../styled/button.vue";
 
 import swal from "sweetalert2";
 
@@ -165,6 +166,8 @@ const saveChanges = () => {
     return;
   }
 
+  // TODO: vall verifyUsername before sending
+
   const formData = new FormData();
   formData.append("name", name);
   formData.append("email", email);
@@ -230,10 +233,10 @@ const updateProfileServer = (profileData: FormData) => {
           :validator="validateUsername"
         />
 
-        <button
-          :disabled="usernameTaken !== undefined"
+        <StyledButton
+          :disable="usernameTaken !== undefined"
           @click="verifyUsername"
-          class="px-6 py-3 w-28 text-white rounded-lg shadow-md active:shadow-lg focus:ring-4 focus:ring-blue-300 transition-all duration-500 ease-in-out"
+          class="w-28"
           :class="
             usernameTaken === undefined
               ? 'bg-blue-600 hover:bg-blue-700'
@@ -243,7 +246,7 @@ const updateProfileServer = (profileData: FormData) => {
           "
         >
           {{ usernameTaken === undefined ? "Check" : usernameTaken ? "Taken" : "Available" }}
-        </button>
+        </StyledButton>
       </div>
       <!-- email -->
       <div class="flex gap-5 relative">
@@ -256,14 +259,13 @@ const updateProfileServer = (profileData: FormData) => {
             :validator="saveEmailToken"
           />
         </div>
-        <button
-          :disabled="disableTokenButton"
-          class="absolute right-0 top-1 w-14 px-1 py-3 text-white rounded-lg shadow-md active:shadow-lg focus:ring-4 focus:ring-blue-300 transition-all"
-          :class="disableTokenButton ? 'bg-gray-600' : 'bg-blue-600 hover:bg-blue-700'"
+        <StyledButton
+          class="absolute right-0 top-1 w-14"
+          :disable="disableTokenButton"
           @click="sendEmail"
         >
           Send
-        </button>
+        </StyledButton>
       </div>
       <!-- password -->
       <div class="flex gap-5">
@@ -332,14 +334,7 @@ const updateProfileServer = (profileData: FormData) => {
       </div>
       <!-- save button -->
       <div class="flex justify-center">
-        <button
-          :disabled="disableSaveButton"
-          :class="disableSaveButton ? 'bg-gray-600' : 'bg-blue-600 hover:bg-blue-700'"
-          class="w-1/2 px-1 py-3 text-white rounded-lg shadow-md active:shadow-lg focus:ring-4 focus:ring-blue-300 transition-all"
-          @click="saveChanges"
-        >
-          Save Changes
-        </button>
+        <StyledButton :disable="disableSaveButton" @click="saveChanges">Save Changes</StyledButton>
       </div>
     </div>
     <!-- password requirements, absolute positioned -->

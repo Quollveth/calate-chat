@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Tooltip from "./tooltip.vue";
+import StyledInput from "./styled/input.vue";
 
 type inputTypes = "text" | "email" | "password" | "number" | "tel" | "url";
 
@@ -33,7 +34,7 @@ const emit = defineEmits(["focus", "blur"]);
 </script>
 <template>
   <div class="relative">
-    <input
+    <StyledInput
       :type="type ?? 'text'"
       :class="[
         title ? 'pt-6 pb-1' : 'py-2',
@@ -52,7 +53,7 @@ const emit = defineEmits(["focus", "blur"]);
       "
       id="input"
       placeholder=""
-      class="peer w-full border border-gray-300 bg-transparent px-3 text-gray-900 invalid:border-red-500 focus:ring-blue-500 rounded-md outline-none"
+      class="peer"
     />
     <!-- TODO: find a better way to postition this tooltip, ideally it grows upwards only -->
     <Tooltip v-show="showTooltip" v-if="tooltipText" :text="tooltipText" class="absolute -top-10" />
