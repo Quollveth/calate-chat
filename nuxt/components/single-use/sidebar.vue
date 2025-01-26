@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import ProfileEditModal from "@/components/single-use/profile-edit.vue";
-import ProfilePicture from "@/components/profile-pic.vue";
-import StyledInput from "@/components/styled/input.vue";
+import ProfileEditModal from "..//single-use/profile-edit.vue";
+import ProfilePicture from "..//profile-pic.vue";
+import StyledInput from "..//styled/input.vue";
+import StyledButton from "../styled/button.vue";
 
 const ProfileModalVisible = ref(false);
 
@@ -19,7 +20,7 @@ const searchChats = (e: Event) => {
 <template>
   <ProfileEditModal v-if="ProfileModalVisible" @close="ProfileModalVisible = false" />
 
-  <div class="w-1/6 h-full border-r border-gray-300 flex flex-col gap-5 px-2">
+  <div class="min-w-60 h-full border-r border-gray-300 flex flex-col gap-5 px-2">
     <!-- current user -->
     <div
       class="my-2 flex gap-3 w-full items-center border text-slate-800 border-gray-300 h-fit py-1 px-1 rounded-full"
@@ -31,9 +32,9 @@ const searchChats = (e: Event) => {
         clickable
         rounded
       />
-      <div>
-        <p class="text-xl my-3">Username</p>
-        <p class="text-sm my-3 flex items-center gap-2">
+      <div class="flex flex-col justify-between">
+        <p class="text-xl">Username</p>
+        <p class="text-sm flex items-center gap-2">
           <svg width="10" height="10" xmlns="http://www.w3.org/2000/svg" class="text-green-600">
             <circle cx="5" cy="5" r="5" fill="currentColor" />
           </svg>
@@ -63,6 +64,12 @@ const searchChats = (e: Event) => {
           </svg>
         </div>
       </div>
+    </div>
+    <!-- chat list -->
+    <div class="h-screen border-t border-b border-gray-300 border-dashed"></div>
+    <!-- create new chat -->
+    <div class="mb-5">
+      <StyledButton class="w-full">Create New Chat</StyledButton>
     </div>
   </div>
 </template>

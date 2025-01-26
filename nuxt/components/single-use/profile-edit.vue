@@ -334,7 +334,9 @@ const updateProfileServer = (profileData: FormData) => {
       </div>
       <!-- save button -->
       <div class="flex justify-center">
-        <StyledButton :disable="disableSaveButton" @click="saveChanges">Save Changes</StyledButton>
+        <StyledButton class="w-1/2" :disable="disableSaveButton" @click="saveChanges"
+          >Save Changes</StyledButton
+        >
       </div>
     </div>
     <!-- password requirements, absolute positioned -->
