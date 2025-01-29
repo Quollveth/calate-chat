@@ -201,8 +201,6 @@ const updateProfileServer = (profileData: FormData) => {
 const emit = defineEmits(["close"]);
 const props = defineProps<{ user: types.UserData }>();
 
-currentUsername.value = props.user?.name ?? "";
-currentEmail.value = props.user?.email ?? "";
 currentPicture.value = props.user?.profilePic ?? "https://placehold.co/20";
 </script>
 <!-- TODO: Reuse this component for account creation -->
@@ -244,6 +242,7 @@ currentPicture.value = props.user?.profilePic ?? "https://placehold.co/20";
 					title="Username"
 					tooltipText="Between 5 and 20 characters"
 					:validator="validateUsername"
+					:initialVal="user.name"
 				/>
 
 				<StyledButton
@@ -274,6 +273,7 @@ currentPicture.value = props.user?.profilePic ?? "https://placehold.co/20";
 					type="email"
 					title="Email"
 					:validator="validateEmail"
+					:initialVal="user.email"
 				/>
 				<div class="flex-1">
 					<ValidatedInput
