@@ -29,7 +29,6 @@ const fetchUserChats = async () => {
 		chats.push({
 			id: i,
 			name: `Placeholder-${i}`,
-			creator: 1,
 			image: "https://placehold.co/20",
 		});
 	}
@@ -39,7 +38,7 @@ const fetchUserChats = async () => {
 
 interface SidebarProps {
 	selected: number;
-	user: types.UserData; // We do need UserData instead of User since this component creates the profile editor that uses that
+	user: types.UserData;
 }
 defineProps<SidebarProps>();
 

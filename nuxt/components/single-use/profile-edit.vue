@@ -75,6 +75,12 @@ const verifyUsername = () => {
 //   | __|  \/  | /_\ |_ _| |
 //   | _|| |\/| |/ _ \ | || |__
 //   |___|_|  |_/_/ \_\___|____|
+const userEmail = ref("");
+const fetchUserEmail = () => {
+	//TODO: SERVER: get email
+	userEmail.value = "quollveth@realdomain.com";
+};
+
 const currentEmail = ref("");
 const validateEmail = (value: string): boolean => {
 	currentEmail.value = value;
@@ -273,7 +279,7 @@ currentPicture.value = props.user?.profilePic ?? "https://placehold.co/20";
 					type="email"
 					title="Email"
 					:validator="validateEmail"
-					:initialVal="user.email"
+					:initialVal="userEmail"
 				/>
 				<div class="flex-1">
 					<ValidatedInput

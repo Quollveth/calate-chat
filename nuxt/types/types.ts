@@ -1,20 +1,23 @@
-// Used in UI
-export interface User {
+/* These types are just used by the ui to do the client side rendering
+ * All the actual data and relations between these are handled by the server/db
+ * So they have only the data the ui actually needs
+ * Plus the id so we know what to request from the server
+ */
+
+export interface UserData {
+	id: number;
 	name: string;
 	profilePic: string;
 }
 
-// Used only when updating user data
-export interface UserData extends User {
-	id: number;
-	email: string;
-	password: string | undefined; // string when sending to the server, undefined when fetching from server
-}
-
-// Stores data about a specific chat room
 export interface Chat {
 	id: number;
 	name: string;
-	creator: number; // id of user that created it
 	image: string;
+}
+
+export interface Message {
+	sender: number;
+	date: string;
+	body: string;
 }

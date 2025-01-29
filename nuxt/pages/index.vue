@@ -6,9 +6,7 @@ import Sidebar from "@/components/single-use/sidebar.vue";
 const placeholderUser: types.UserData = {
 	id: 1,
 	name: "Quollveth",
-	email: "quollveth@realdomain.com",
 	profilePic: "https://placehold.co/150",
-	password: undefined,
 };
 
 const selectedChat = ref(-1);
