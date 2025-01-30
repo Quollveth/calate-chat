@@ -9,15 +9,23 @@ const fetchMessages = async () => {
 
 	// PLACEHOLDER
 	let mess: types.Message[] = [];
+
+	const past = Date.now() - 1000000;
 	for (let i = 0; i < 50; i++) {
 		mess.push({
 			sender: 1,
-			timestamp: 1000 - i,
+			timestamp: String(past + i * 10000),
 			body: `Placeholder message delete me later - ${i}`,
 		});
 	}
+
 	messages.value = mess;
 	fetchUsers(mess);
+};
+
+const messageIn = ref<HTMLInputElement>();
+const sendMessage = async (msg: string) => {
+	//TODO:SERVER: send message
 };
 
 const usersMap = ref<Map<number, types.UserData>>(new Map());
@@ -25,7 +33,7 @@ const fetchUserData = async (id: number): Promise<types.UserData | undefined> =>
 	//TODO: SERVER: get user
 	return {
 		id: 1,
-		name: "Alice",
+		name: "Placeholder User",
 		profilePic: "https://placehold.co/20",
 	};
 };
@@ -50,22 +58,51 @@ const fetchUsers = async (messageList: types.Message[]) => {
 	}
 };
 
-const timestampFormat = (time: number) => {
-	//TODO: format timestamp as 'x seconds/minutes/hours/days ago'
-	return `${time}`;
+const timestampFormat = (time: string) => {
+	const pastTime = parseInt(time, 10);
+	const currentTime = Date.now();
+
+	const difference = currentTime - pastTime;
+
+	const second = 1000;
+	const minute = second * 60;
+	const hour = minute * 60;
+	const day = hour * 24;
+
+	if (difference < minute) {
+		const seconds = Math.floor(difference / second);
+		return `${seconds} second${seconds !== 1 ? "s" : ""} ago`;
+	} else if (difference < hour) {
+		const minutes = Math.floor(difference / minute);
+		return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+	} else if (difference < day) {
+		const hours = Math.floor(difference / hour);
+		return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+	} else {
+		const days = Math.floor(difference / day);
+		return `${days} day${days !== 1 ? "s" : ""} ago`;
+	}
 };
 
-const messageIn = ref<HTMLInputElement>();
-const sendMessage = async (msg: string) => {
-	//TODO:SERVER: send message
-};
+const loading = ref(true);
 
+/*TODO:
+ * Loading screen
+ * Scroll to bottom of messages once chat loads
+ * Fetch more messages when we reach the oldest
+ */
+onBeforeMount(() => {
+	loading.value = true;
+	fetchMessages().then(() => {
+		loading.value = false;
+	});
+});
 defineProps<{
 	chatData: types.Chat;
 }>();
 </script>
 <template>
-	<div class="flex w-full flex-col h-screen bg-gray-50">
+	<div v-if="!loading" class="flex w-full flex-col h-screen bg-gray-50">
 		<!-- Chatroom Header -->
 		<div class="flex items-center p-4 bg-white shadow-sm">
 			<img :src="chatData.image" class="w-14 h-14 rounded-full" />
@@ -73,16 +110,28 @@ defineProps<{
 		</div>
 
 		<!-- Messages Container -->
-		<div class="flex-1 overflow-y-auto p-4 space-y-4">
-			<div v-for="msg in messages" :key="msg.timestamp" class="flex items-start space-x-3">
+		<div class="flex-1 overflow-y-auto p-4 space-y-4 bg-white">
+			<div
+				v-for="msg in messages"
+				:key="msg.timestamp"
+				class="flex items-start space-x-4 p-4 rounded-lg shadow-sm bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+			>
 				<img
 					:src="usersMap.get(msg.sender)!.profilePic"
 					alt="Profile Picture"
-					class="w-8 h-8 rounded-full"
+					class="w-10 h-10 rounded-full object-cover shadow-sm"
 				/>
+
 				<div class="flex-1">
-					<p class="text-sm text-gray-500">{{ timestampFormat(msg.timestamp) }}</p>
-					<p class="p-3 bg-white rounded-lg shadow-sm text-gray-700">{{ msg.body }}</p>
+					<!-- Sender Name and Timestamp -->
+					<div class="flex items-center justify-between">
+						<p class="text-sm font-medium text-gray-900">
+							{{ usersMap.get(msg.sender)!.name }}
+						</p>
+						<p class="text-xs text-gray-500">{{ timestampFormat(msg.timestamp) }}</p>
+					</div>
+
+					<p class="mt-1 text-sm text-gray-700">{{ msg.body }}</p>
 				</div>
 			</div>
 		</div>
