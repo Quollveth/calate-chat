@@ -2,6 +2,7 @@
 import type * as types from "@/types/types.ts";
 
 import Sidebar from "@/components/single-use/sidebar.vue";
+import Chatroom from "@/components/single-use/chatroom.vue";
 
 const placeholderUser: types.UserData = {
 	id: 1,
@@ -10,20 +11,22 @@ const placeholderUser: types.UserData = {
 };
 
 const selectedChat = ref(-1);
+const currentChat = ref<types.Chat>({
+	id: -1,
+	name: "Amazing Chat",
+	image: "https://placehold.co/20",
+});
+
+const loadChatroom = async (id: number) => {
+	selectedChat.value = id;
+
+	//TODO: SERVER: load chatroom
+};
 </script>
 
 <template>
 	<div class="flex justify-start h-screen">
-		<Sidebar
-			:user="placeholderUser"
-			:selected="selectedChat"
-			@chatClicked="
-				(c: number) => {
-					selectedChat = c;
-				}
-			"
-		/>
-
-		<h2>chat {{ selectedChat }} is loaded</h2>
+		<Sidebar :user="placeholderUser" :selected="selectedChat" @chatClicked="loadChatroom" />
+		<Chatroom :chatData="currentChat" />
 	</div>
 </template>

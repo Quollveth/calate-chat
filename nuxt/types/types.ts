@@ -18,6 +18,6 @@ export interface Chat {
 
 export interface Message {
 	sender: number;
-	date: string;
+	timestamp: number;
 	body: string;
 }
